@@ -35,9 +35,9 @@ def cache_for(cache_label, time=None):
             if not result:
                 result = fn(*args, **kwargs)
                 cache.set(key, result, time)
-                logger.debug('Cache {} set {}'.format(cache_label, join_(*args)))
+                print('Cache {} set {}'.format(cache_label, join_(*args)))
             else:
-                logger.debug('Cache {} hit {}'.format(cache_label, join_(*args)))
+                print('Cache {} hit {}'.format(cache_label, join_(*args)))
             return result
 
         return wrapper
