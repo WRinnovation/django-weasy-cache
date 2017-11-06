@@ -1,5 +1,5 @@
 # django-weasy-cache
-Simple django cache decorator ready to use linke this:
+Simple django cache decorator ready to use.
 
 ## Install
 
