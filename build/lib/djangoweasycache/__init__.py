@@ -26,7 +26,7 @@ def cache_get_key(*args, **kwargs):
 
 
 # decorator for caching functions
-def cache_for(cache_label, time=None):
+def cache_for(cache_label, time=None, default_time=False):
     def decorator(fn):
         def wrapper(*args, **kwargs):
             cache = caches[cache_label]
@@ -34,7 +34,7 @@ def cache_for(cache_label, time=None):
             result = cache.get(key)
             if not result:
                 result = fn(*args, **kwargs)
-                cache.set(key, result, time)
+                cache.set(key, result, time) if default_time is False else cache.set(key, result)
                 print('Cache {} set {}'.format(cache_label, join_(*args)))
             else:
                 print('Cache {} hit {}'.format(cache_label, join_(*args)))
