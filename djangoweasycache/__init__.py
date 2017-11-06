@@ -26,7 +26,13 @@ def cache_get_key(*args, **kwargs):
 
 
 # decorator for caching functions
-def cache_for(cache_label, time=None):
+def cache_for(cache_label, time=None, default_time=False):
+    """
+    :param cache_label: key for django cache
+    :param time: timeout in seconds
+    :param default_time: if True uses default django timeout defined in settings
+    :return: result of decorated function
+    """
     def decorator(fn):
         def wrapper(*args, **kwargs):
             cache = caches[cache_label]
@@ -34,7 +40,7 @@ def cache_for(cache_label, time=None):
             result = cache.get(key)
             if not result:
                 result = fn(*args, **kwargs)
-                cache.set(key, result, time)
+                cache.set(key, result, time) if default_time is False else cache.set(key, result)
                 logger.debug('Cache {} set {}'.format(cache_label, join_(*args)))
             else:
                 logger.debug('Cache {} hit {}'.format(cache_label, join_(*args)))
