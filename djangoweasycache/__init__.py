@@ -25,19 +25,35 @@ def cache_get_key(*args, **kwargs):
     return key
 
 
+# define cache key structure
+def cache_define_key(fn, override_key=None, override_key_for_self=None, *args, **kwargs):
+    if override_key_for_self is not None:
+        # use property of object
+        new_args = [getattr(args[0], override_key_for_self)] + list(args[1:]) if len(args) > 1 else [getattr(args[0], override_key_for_self)]
+        key = cache_get_key(fn.__name__, new_args, **{})
+    elif override_key is not None:
+        # use custom string
+        key = cache_get_key(fn.__name__, [override_key], **{})
+    else:
+        # default - use mix of args and kwargs
+        key = cache_get_key(fn.__name__, *args, **kwargs)
+    return key
+
+
 # decorator for caching functions
-def cache_for(cache_label, time=None, default_time=False, override_key=None):
+def cache_for(cache_label, time=None, default_time=False, override_key=None, override_key_for_self=None):
     """
         :param cache_label: key for django cache
         :param time: timeout in seconds
         :param default_time: if True uses default django timeout defined in settings
         :param override_key: if not None defines cache key
+        :param override_key_for_self: if not None defines self properties as cache key
         :return: result of decorated function
         """
     def decorator(fn):
         def wrapper(*args, **kwargs):
             cache = caches[cache_label]
-            key = cache_get_key(fn.__name__, [override_key], **{}) if override_key is not None else cache_get_key(fn.__name__, *args, **kwargs)
+            key = cache_define_key(fn, override_key, override_key_for_self, *args, **kwargs)
             result = cache.get(key)
             if not result:
                 result = fn(*args, **kwargs)
@@ -50,3 +66,6 @@ def cache_for(cache_label, time=None, default_time=False, override_key=None):
         return wrapper
 
     return decorator
+
+
+
