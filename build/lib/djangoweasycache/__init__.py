@@ -32,9 +32,9 @@ def cache_get_key(*args, **kwargs):
 # define cache key structure
 def cache_define_key(fn, override_key=None, override_key_for_self=None, *args, **kwargs):
     if override_key_for_self is not None:
-        # use property of object
-        new_args = [getattr(args[0], override_key_for_self, override_key_for_self)] + list(args[1:]) if len(args) > 1 else [getattr(args[0], override_key_for_self)]
-        key = cache_get_key(fn.__name__, new_args, **{})
+        # use property of object - pulling out self as args[0]
+        new_args = [getattr(args[0], override_key_for_self, override_key_for_self)] + list(args[1:]) if len(args) > 1 else [getattr(args[0], override_key_for_self, override_key_for_self)]
+        key = cache_get_key(fn.__name__, new_args, **kwargs)
     elif override_key is not None:
         # use custom string
         key = cache_get_key(fn.__name__, [override_key], **{})
