@@ -16,7 +16,7 @@ class Conf(object):
     """
     try:
         conf = settings.WEASY_CACHE
-    except AttributeError:
+    except NameError:
         conf = {}
 
     # Log output level
