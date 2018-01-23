@@ -53,11 +53,10 @@ def get_cache(cache_label, use_diskcache=False):
 
 
 # decorator for caching functions
-def cache_for(cache_label, time=None, default_time=True, override_key=None, override_key_for_self=None, use_diskcache=False):
+def cache_for(cache_label, time=None, override_key=None, override_key_for_self=None, use_diskcache=False):
     """
         :param cache_label: key for django cache
         :param time: timeout in seconds
-        :param default_time: if True uses default django timeout defined in settings
         :param override_key: if not None defines cache key
         :param override_key_for_self: if not None defines self properties as first part of cache key
         :param use_diskcache: if True uses diskcache lib instead of django cache framework
@@ -70,7 +69,7 @@ def cache_for(cache_label, time=None, default_time=True, override_key=None, over
             result = cache.get(key)
             if result is None:
                 result = fn(*args, **kwargs)
-                cache.set(key, result, time) if default_time is False else cache.set(key, result)
+                cache.set(key, result, time) if time is not None else cache.set(key, result)
                 print('Cache {} set {}'.format(cache_label, join_(*args)))
             else:
                 print('Cache {} hit {}'.format(cache_label, join_(*args)))
