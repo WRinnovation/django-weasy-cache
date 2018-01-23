@@ -68,7 +68,7 @@ def cache_for(cache_label, time=None, default_time=True, override_key=None, over
             cache = get_cache(cache_label, use_diskcache)
             key = cache_define_key(fn, override_key, override_key_for_self, *args, **kwargs)
             result = cache.get(key)
-            if not result:
+            if result is None:
                 result = fn(*args, **kwargs)
                 cache.set(key, result, time) if default_time is False else cache.set(key, result)
                 print('Cache {} set {}'.format(cache_label, join_(*args)))
