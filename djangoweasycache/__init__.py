@@ -1,6 +1,10 @@
 import hashlib
 import logging
-from django.core.cache import caches
+try:
+    from django.core.cache import caches
+except ImportError:
+    from diskcache import Cache as caches
+
 
 logger = logging.getLogger(__name__)
 
@@ -40,19 +44,28 @@ def cache_define_key(fn, override_key=None, override_key_for_self=None, *args, *
     return key
 
 
+# get cache by its label - path
+def get_cache(cache_label, use_diskcache=False):
+    if not use_diskcache:
+        return caches[cache_label]
+    else:
+        return caches(cache_label)
+
+
 # decorator for caching functions
-def cache_for(cache_label, time=None, default_time=False, override_key=None, override_key_for_self=None):
+def cache_for(cache_label, time=None, default_time=True, override_key=None, override_key_for_self=None, use_diskcache=False):
     """
         :param cache_label: key for django cache
         :param time: timeout in seconds
         :param default_time: if True uses default django timeout defined in settings
         :param override_key: if not None defines cache key
         :param override_key_for_self: if not None defines self properties as cache key
+        :param use_diskcache: if True uses diskcache lib instead of django cache framework
         :return: result of decorated function
         """
     def decorator(fn):
         def wrapper(*args, **kwargs):
-            cache = caches[cache_label]
+            cache = get_cache(cache_label, use_diskcache)
             key = cache_define_key(fn, override_key, override_key_for_self, *args, **kwargs)
             result = cache.get(key)
             if not result:
