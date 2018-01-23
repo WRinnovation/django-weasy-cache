@@ -33,7 +33,7 @@ def cache_get_key(*args, **kwargs):
 def cache_define_key(fn, override_key=None, override_key_for_self=None, *args, **kwargs):
     if override_key_for_self is not None:
         # use property of object
-        new_args = [getattr(args[0], override_key_for_self)] + list(args[1:]) if len(args) > 1 else [getattr(args[0], override_key_for_self)]
+        new_args = [getattr(args[0], override_key_for_self, override_key_for_self)] + list(args[1:]) if len(args) > 1 else [getattr(args[0], override_key_for_self)]
         key = cache_get_key(fn.__name__, new_args, **{})
     elif override_key is not None:
         # use custom string
@@ -59,7 +59,7 @@ def cache_for(cache_label, time=None, default_time=True, override_key=None, over
         :param time: timeout in seconds
         :param default_time: if True uses default django timeout defined in settings
         :param override_key: if not None defines cache key
-        :param override_key_for_self: if not None defines self properties as cache key
+        :param override_key_for_self: if not None defines self properties as first part of cache key
         :param use_diskcache: if True uses diskcache lib instead of django cache framework
         :return: result of decorated function
         """
