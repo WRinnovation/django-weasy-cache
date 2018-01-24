@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-weasy-cache',
-    version='0.8.1dev',
+    version='0.8.2dev',
     packages=['djangoweasycache', ],
     requires=['python (>= 2.7)'],
     license='Apache2',

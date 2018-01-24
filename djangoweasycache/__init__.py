@@ -18,6 +18,8 @@ class Conf(object):
         conf = settings.WEASY_CACHE
     except NameError:
         conf = {}
+    except AttributeError:
+        conf = {}
 
     # Log output level
     LOG_LEVEL = conf.get('log_level', 'INFO')
